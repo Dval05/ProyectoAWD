@@ -1,3 +1,28 @@
+// Función global para navegación
+function goHTML(page) {
+    console.log('Navegando a:', page); // Debug
+    
+    // Construir la ruta correcta basada en la ubicación actual
+    let basePath = '';
+    const currentPath = window.location.pathname;
+    
+    // Si estamos en una subcarpeta (como users/), subir un nivel
+    if (currentPath.includes('/users/') || currentPath.includes('/payments/') || currentPath.includes('/products/')) {
+        basePath = '../';
+    }
+    
+    const fullPath = basePath + page;
+    console.log('Ruta completa:', fullPath); // Debug
+    
+    // Intentar múltiples métodos de navegación
+    try {
+        window.location.replace(fullPath);
+    } catch(e) {
+        console.log('Error con replace, usando href');
+        window.location.href = fullPath;
+    }
+}
+
 $(function() {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -16,7 +41,7 @@ $(function() {
             console.log(resp.links); 
 
             if (resp.success && resp.links.length > 0) {
-                let html = `<a class="sidebar-brand d-flex align-items-center justify-content-center" href="#" onclick="goHTML('dashboard.html'); return false;">
+                let html = `<a class="sidebar-brand d-flex align-items-center justify-content-center" href="../dashboard.html">
                     <div class="sidebar-brand-icon"><i class="fas fa-child"></i></div>
                     <div class="sidebar-brand-text mx-3">NICEKIDS</div>
                 </a>
@@ -24,8 +49,14 @@ $(function() {
                 resp.links.forEach(item => {
                     // Debug de cada ruta
                     console.log(item.Link, item.Title);
+                    
+                    let linkPath = '../' + item.Link;
+                    if (window.location.pathname.includes('/users/')) {
+                        linkPath = '../' + item.Link;
+                    }
+                    
                     html += `<li class="nav-item">
-                        <a class="nav-link" href="#" onclick="goHTML('${item.Link}'); return false;">
+                        <a class="nav-link" href="${linkPath}">
                             <i class="fas fa-fw ${item.Icon}"></i>
                             <span>${item.Title}</span>
                         </a>

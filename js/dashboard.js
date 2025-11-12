@@ -1,92 +1,105 @@
 $(function(){
-  // Total estudiantes
-  $.get("../php/dashboard/total_students.php", resp=>{
-    if(resp.success) $("#totalStudents").text(resp.total);
-  });
+  requireAuth();
 
-  // Total teachers
-  $.get("../php/dashboard/total_teachers.php", resp=>{
-    if(resp.success) $("#totalTeachers").text(resp.total);
-  });
+  // Carga métricas principales
+  function loadSummary(){
+    $.get(API_BASE_URL + "/dashboard/summary.php", function(res) {
+      if(res.success){
+        $("#totalStudents").text(res.data.students);
+        $("#totalTeachers").text(res.data.teachers);
+        $("#todayAttendance").text(res.data.todayAttendance+"%");
+        $("#attendanceProgress").css("width", res.data.todayAttendance+"%");
+        $("#monthlyRevenue").text(moneyFormat(res.data.monthlyRevenue));
+      }
+    });
+  }
 
-  // Asistencia hoy
-  $.get("../php/dashboard/today_attendance.php", resp=>{
-    if(resp.success){
-      $("#todayAttendance").text(resp.percent+"%");
-      $("#attendanceProgress").css("width", resp.percent+"%").attr("aria-valuenow", resp.percent);
-    }
-  });
+  // Carga gráfico de asistencia semanal (requiere Chart.js)
+  function loadAttendanceChart(){
+    $.get(API_BASE_URL + "/dashboard/weekly_attendance.php", function(res){
+      if(res.success){
+        var ctx = document.getElementById("attendanceChart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: res.data.days, // Ej: ["Lunes","Martes",...]
+            datasets: [{
+              label: "Asistencias",
+              data: res.data.values,
+              backgroundColor: "rgba(78, 115, 223, 0.05)",
+              borderColor: "rgba(78, 115, 223, 1)",
+              pointRadius: 3,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            scales: { yAxes: [{ticks:{beginAtZero:true}}] }, legend:{display:false}
+          }
+        });
+      }
+    });
+  }
 
-  // Ingresos mes
-  $.get("../php/dashboard/monthly_revenue.php", resp=>{
-    if(resp.success) $("#monthlyRevenue").text("$"+(resp.revenue||0).toLocaleString("es-EC",{minimumFractionDigits:2}));
-  });
-
-  // Actividades recientes
-  $.get("../php/dashboard/recent_activities.php", resp=>{
-    if(resp.success && resp.data.length){
-      let b = "<ul class='list-group'>";
-      resp.data.forEach(a=>{
-        b += `<li class='list-group-item d-flex justify-content-between align-items-center'>
-          <span>${a.Name} (${a.Category||''})<br/><small>${a.ScheduledDate}</small></span>
-          <span class="badge badge-${a.Status=='Completed'?'success':a.Status=='In Progress'?'info':a.Status=='Cancelled'?'danger':'secondary'}">${a.Status}</span>
-        </li>`;
-      });
-      b+="</ul>";
+  // Carga actividades recientes
+  function loadRecentActivities(){
+    $.get(API_BASE_URL + "/activities/recent.php", function(res){
+      let b = "";
+      if(res.success && res.data.length){
+        res.data.forEach(a=>{
+          b += `<div class="mb-2">
+                  <strong>${a.Name}</strong> (${dateToString(a.Date)})<br>
+                  <span class="text-muted">${a.Description||""}</span>
+                </div>`;
+        });
+      } else {
+        b = `<p class="text-center text-muted">Sin actividades recientes</p>`;
+      }
       $("#recentActivities").html(b);
-    }else{
-      $("#recentActivities").html("<p class='text-muted text-center'>Sin actividades recientes</p>");
-    }
-  });
+    });
+  }
 
-  // Pagos pendientes
-  $.get("../php/dashboard/pending_payments.php", resp=>{
-    let b = "";
-    if(resp.success && resp.data.length){
-      resp.data.forEach(p=>{
-        b += `<tr><td>${p.FirstName} ${p.LastName}</td><td>$${p.TotalAmount}</td><td>${p.DueDate}</td></tr>`;
-      });
-    } else {
-      b = `<tr><td colspan="3" class="text-center text-muted">Sin pagos pendientes</td></tr>`;
-    }
-    $("#pendingPaymentsTable").html(b);
-  });
+  // Carga pagos pendientes
+  function loadPendingPayments(){
+    $.get(API_BASE_URL + "/payments/student/pending.php", function(res){
+      let b = "";
+      if(res.success && res.data.length){
+        res.data.forEach(p=>{
+          b += `<tr>
+                  <td>${p.StudentName}</td>
+                  <td>${moneyFormat(p.Amount)}</td>
+                  <td>${dateToString(p.DueDate)}</td>
+                </tr>`;
+        });
+      } else {
+        b = `<tr><td colspan="3" class="text-center text-muted">Sin pagos pendientes</td></tr>`;
+      }
+      $("#pendingPaymentsTable").html(b);
+    });
+  }
 
   // Próximas actividades
-  $.get("../php/dashboard/upcoming_activities.php", resp=>{
-    let b = "";
-    if(resp.success && resp.data.length){
-      resp.data.forEach(a=>{
-        b += `<tr><td>${a.Name}</td><td>${a.ScheduledDate}</td><td>${a.Status}</td></tr>`;
-      });
-    } else {
-      b = `<tr><td colspan="3" class="text-center text-muted">Sin próximas actividades</td></tr>`;
-    }
-    $("#upcomingActivitiesTable").html(b);
-  });
+  function loadUpcomingActivities(){
+    $.get(API_BASE_URL + "/activities/upcoming.php", function(res){
+      let b = "";
+      if(res.success && res.data.length){
+        res.data.forEach(act=>{
+          b += `<tr>
+                  <td>${act.Name}</td>
+                  <td>${dateToString(act.Date)}</td>
+                  <td>${act.Status}</td>
+                </tr>`;
+        });
+      } else {
+        b = `<tr><td colspan="3" class="text-center text-muted">Sin actividades próximas</td></tr>`;
+      }
+      $("#upcomingActivitiesTable").html(b);
+    });
+  }
 
-  // Chart asistencia semanal
-  $.get("../php/dashboard/attendance_week.php", resp=>{
-    if(resp.success && window.Chart){
-      let ctx = document.getElementById('attendanceChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: resp.labels,
-          datasets: [{
-            label: "Asistencia %",
-            data: resp.data,
-            borderColor: "#4e73df",
-            backgroundColor: "rgba(78,115,223,0.1)",
-            fill: true
-          }]
-        },
-        options: {
-          scales: {
-            y: {beginAtZero: true,max:100}
-          }
-        }
-      });
-    }
-  });
+  // Inicializar Dashboard
+  loadSummary();
+  loadAttendanceChart();
+  loadRecentActivities();
+  loadPendingPayments();
+  loadUpcomingActivities();
 });

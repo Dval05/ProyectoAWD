@@ -97,13 +97,14 @@
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Gestión de Actividades</h1>
                     <div>
-                        <a href="activity-calendar.html" class="btn btn-sm btn-primary shadow-sm">
+                        <select id="filterTeacher" class="form-control form-control-sm d-inline-block mr-2" style="width:250px">
+                            <option value="">Todos los docentes</option>
+                        </select>
+                        <a id="btnAddTeacher" href="../staff/teacher-detail.html" class="btn btn-sm btn-outline-primary shadow-sm"><i class="fas fa-user-plus"></i> Agregar Docente</a>
+                        <button id="btnCreateActivity" class="btn btn-sm btn-success shadow-sm ml-2" type="button"><i class="fas fa-plus-circle"></i> Crear Actividad</button>
+                        <a href="activity-calendar.html" class="btn btn-sm btn-primary shadow-sm ml-2">
                             <i class="fas fa-calendar-alt"></i> Ver Calendario
                         </a>
-                        <!-- Nuevo: botón crear actividad -->
-                        <button id="btnCreateActivity" class="btn btn-sm btn-success shadow-sm" data-toggle="modal" data-target="#activityModal">
-                            <i class="fas fa-plus"></i> Crear Actividad
-                        </button>
                     </div>
                 </div>
                 <div class="card shadow mb-4">
@@ -129,6 +130,90 @@
                 </div>
             </div>
         </div>
+        <!-- Modal: Crear Actividad -->
+        <div class="modal fade" id="createActivityModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Crear Actividad</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form id="createActivityForm">
+                <div class="modal-body">
+                  <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white">
+                      <h6 class="m-0">Paso 1: Seleccionar Docente</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="assignTeacherSwitch">
+                        <label class="custom-control-label" for="assignTeacherSwitch">Asignar docente a esta actividad</label>
+                      </div>
+                      <div id="teacherSelectWrapper" style="display:none; margin-top:15px;">
+                        <label for="actTeacher" class="font-weight-bold">Seleccione docente</label>
+                        <select id="actTeacher" class="form-control" required>
+                          <option value="">-- Cargando docentes --</option>
+                        </select>
+                      </div>
+                      <div id="noTeachersMsg" class="alert alert-warning mt-3" style="display:none;">
+                        No hay docentes registrados. <a href="../staff/teacher-detail.html" target="_blank">Agregar docente</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                      <h6 class="m-0">Paso 2: Datos de la Actividad</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="form-group">
+                        <label for="actName" class="font-weight-bold">Nombre de Actividad</label>
+                        <input id="actName" class="form-control" placeholder="Ej: Lectura comprensiva" required />
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="actDate" class="font-weight-bold">Fecha</label>
+                          <input id="actDate" type="date" class="form-control" />
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="actGrade" class="font-weight-bold">Grado</label>
+                          <input id="actGrade" class="form-control" placeholder="Ej: 3A" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="actCategory" class="font-weight-bold">Categoría</label>
+                        <select id="actCategory" class="form-control">
+                          <option value="General">General</option>
+                          <option value="Académica">Académica</option>
+                          <option value="Deportiva">Deportiva</option>
+                          <option value="Cultural">Cultural</option>
+                          <option value="Recreativa">Recreativa</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="actStatus" class="font-weight-bold">Estado</label>
+                        <select id="actStatus" class="form-control">
+                          <option value="Programada">Programada</option>
+                          <option value="En progreso">En progreso</option>
+                          <option value="Completada">Completada</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="actDescription" class="font-weight-bold">Descripción</label>
+                        <textarea id="actDescription" class="form-control" rows="3" placeholder="Detalles de la actividad..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Crear Actividad</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
         <footer class="sticky-footer bg-white">
             <div class="container my-auto"><div class="copyright text-center my-auto">
                 <span>&copy; NICEKIDS 2025</span>
@@ -148,392 +233,5 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/dynamic-sidebar.js"></script>
     <script src="../../js/activities/activities.js"></script>
-<!-- Inserto modales justo antes del footer -->
-<!-- Modal: Crear / Editar Actividad -->
-<div class="modal fade" id="activityModal" tabindex="-1" role="dialog" aria-labelledby="activityModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <form id="activityForm" class="modal-content" onsubmit="event.preventDefault(); saveActivity();">
-      <div class="modal-header">
-        <h5 class="modal-title" id="activityModalLabel">Crear Actividad</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="ActivityID" />
-        <div class="form-row">
-          <div class="form-group col-md-8">
-            <label>Nombre</label>
-            <input id="Name" class="form-control" required maxlength="200" />
-          </div>
-          <div class="form-group col-md-4">
-            <label>Categoría</label>
-            <select id="Category" class="form-control">
-              <option>Arte</option><option>Música</option><option>Deporte</option><option>Académico</option><option>Otro</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Descripción</label>
-          <textarea id="Description" class="form-control" rows="3"></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label>Grado</label>
-            <select id="GradeID" class="form-control">
-              <!-- TODO: poblar dinámicamente con /api/grades -->
-            </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label>Docente responsable</label>
-            <select id="EmpID" class="form-control">
-              <!-- TODO: poblar dinámicamente con /api/employees (docentes) -->
-            </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label>Estado</label>
-            <select id="Status" class="form-control">
-              <option>Planned</option><option>In Progress</option><option>Completed</option><option>Cancelled</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label>Fecha programada</label>
-            <input id="ScheduledDate" type="date" class="form-control" />
-          </div>
-          <div class="form-group col-md-4">
-            <label>Hora inicio</label>
-            <input id="StartTime" type="time" class="form-control" />
-          </div>
-          <div class="form-group col-md-4">
-            <label>Hora fin</label>
-            <input id="EndTime" type="time" class="form-control" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label>Ubicación</label>
-            <input id="Location" class="form-control" maxlength="200" />
-          </div>
-          <div class="form-group col-md-6">
-            <label>Imagen (opcional)</label>
-            <input id="ImagePath" type="file" accept="image/*" class="form-control-file" />
-          </div>
-        </div>
-
-        <div class="alert alert-info small">
-          Para asignar a una maestra usando calendario con hora de inicio/fin use el botón "Asignar Maestra" (abre un modal específico).
-        </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-outline-primary mr-auto" onclick="openAssignModalFromForm()">Asignar Maestra</button>
-        <button type="submit" class="btn btn-primary">Guardar Actividad</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal: Asignar Maestra (calendario simple: fecha + horas) -->
-<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form id="assignForm" class="modal-content" onsubmit="event.preventDefault(); assignTeacher();">
-      <div class="modal-header">
-        <h5 class="modal-title" id="assignModalLabel">Asignar Maestra</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="assignActivityID" />
-        <div class="form-group">
-          <label>Maestra</label>
-          <select id="assignEmpID" class="form-control" required>
-            <!-- TODO: poblar con /api/employees (solo docentes) -->
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Fecha</label>
-          <input id="assignDate" type="date" class="form-control" required />
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label>Hora inicio</label>
-            <input id="assignStartTime" type="time" class="form-control" required />
-          </div>
-          <div class="form-group col-md-6">
-            <label>Hora fin</label>
-            <input id="assignEndTime" type="time" class="form-control" required />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Notas (opcional)</label>
-          <textarea id="assignNotes" class="form-control" rows="2"></textarea>
-        </div>
-        <div class="small text-muted">Esto creará/actualizará la asignación del docente para la actividad en la fecha y hora indicadas.</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="submit" class="btn btn-primary">Asignar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal: Subir material (activity_media) -->
-<div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form id="mediaForm" class="modal-content" onsubmit="event.preventDefault(); uploadMedia();">
-      <div class="modal-header">
-        <h5 class="modal-title" id="mediaModalLabel">Subir Material</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="mediaActivityID" />
-        <div class="form-group">
-          <label>Tipo</label>
-          <select id="MediaType" class="form-control">
-            <option>Image</option><option>Video</option><option>Document</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Archivo</label>
-          <input id="FilePath" type="file" class="form-control-file" required />
-        </div>
-        <div class="form-group">
-          <label>Caption</label>
-          <input id="Caption" class="form-control" maxlength="255" />
-        </div>
-        <div class="small text-muted">Al subir el archivo se enviará FormData al endpoint /api/activity_media (implementarlo en servidor).</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="submit" class="btn btn-primary">Subir</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal: Ver Actividad -->
-<div class="modal fade" id="viewActivityModal" tabindex="-1" role="dialog" aria-labelledby="viewActivityModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><span id="viewName"></span></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Descripción:</strong> <span id="viewDescription"></span></p>
-        <p><strong>Fecha:</strong> <span id="viewScheduledDate"></span> <strong>Hora:</strong> <span id="viewStartEnd"></span></p>
-        <p><strong>Grado:</strong> <span id="viewGrade"></span> | <strong>Docente:</strong> <span id="viewEmp"></span></p>
-        <p><strong>Categoría:</strong> <span id="viewCategory"></span> | <strong>Ubicación:</strong> <span id="viewLocation"></span></p>
-        <div id="viewMediaGallery" class="row"></div>
-      </div>
-      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button></div>
-    </div>
-  </div>
-</div>
-
-<!-- Scripts adicionales: handlers mínimos (placeholders) -->
-<script>
-// ...existing code...
-/* Handlers mínimos - debes implementar endpoints en servidor y adaptar rutas */
-document.addEventListener('DOMContentLoaded', function(){
-  // TODO: cargar lista de actividades y poblar #activitiesTableBody
-  loadActivities();
-  loadGradesAndTeachers();
-});
-
-function loadActivities(){
-  // TODO: reemplazar por fetch('/api/activities') y poblar la tabla
-  // por ahora ejemplo de estructura de fila con botones de acción
-  // La implementación real debe renderizar rows dinámicamente.
-  // Ejemplo: cada fila debe contener botones: Ver, Editar, Eliminar, Asignar, Subir Media
-}
-
-function loadGradesAndTeachers(){
-  // TODO: fetch('/api/grades') para #GradeID
-  // TODO: fetch('/api/employees?role=teacher') para #EmpID y #assignEmpID
-}
-
-/* Guardar (crear o actualizar) actividad */
-async function saveActivity(){
-  const id = document.getElementById('ActivityID').value;
-  const payload = {
-    Name: document.getElementById('Name').value,
-    Description: document.getElementById('Description').value,
-    GradeID: document.getElementById('GradeID').value || null,
-    EmpID: document.getElementById('EmpID').value || null,
-    ScheduledDate: document.getElementById('ScheduledDate').value || null,
-    StartTime: document.getElementById('StartTime').value || null,
-    EndTime: document.getElementById('EndTime').value || null,
-    Location: document.getElementById('Location').value || null,
-    Category: document.getElementById('Category').value || null,
-    Status: document.getElementById('Status').value || 'Planned'
-  };
-
-  // Si hay imagen, empaquetar en FormData
-  const imageInput = document.getElementById('ImagePath');
-  if(imageInput && imageInput.files && imageInput.files.length){
-    const fd = new FormData();
-    fd.append('image', imageInput.files[0]);
-    // TODO: subir imagen al servidor y obtener ruta; por ahora omitimos.
-    // const res = await fetch('/api/upload-image', {method:'POST', body:fd});
-    // payload.ImagePath = (await res.json()).path;
-  }
-
-  try{
-    if(!id){
-      // Crear
-      // TODO: replace endpoint
-      // await fetch('/api/activities', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-      console.log('Crear actividad', payload);
-    } else {
-      // Actualizar
-      payload.ActivityID = id;
-      // await fetch(`/api/activities/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-      console.log('Actualizar actividad', payload);
-    }
-    $('#activityModal').modal('hide');
-    loadActivities();
-  }catch(e){
-    console.error(e);
-    alert('Error guardando actividad (ver consola).');
-  }
-}
-
-/* Abrir modal de edición */
-function openEditActivity(activity){
-  // activity es objeto con campos; al cargar desde servidor pasar aquí
-  document.getElementById('ActivityID').value = activity.ActivityID;
-  document.getElementById('Name').value = activity.Name || '';
-  document.getElementById('Description').value = activity.Description || '';
-  document.getElementById('GradeID').value = activity.GradeID || '';
-  document.getElementById('EmpID').value = activity.EmpID || '';
-  document.getElementById('ScheduledDate').value = activity.ScheduledDate || '';
-  document.getElementById('StartTime').value = activity.StartTime || '';
-  document.getElementById('EndTime').value = activity.EndTime || '';
-  document.getElementById('Location').value = activity.Location || '';
-  document.getElementById('Category').value = activity.Category || '';
-  document.getElementById('Status').value = activity.Status || 'Planned';
-  document.getElementById('activityModalLabel').innerText = 'Editar Actividad';
-  $('#activityModal').modal('show');
-}
-
-/* Ver actividad */
-function viewActivity(activity){
-  document.getElementById('viewName').innerText = activity.Name || '';
-  document.getElementById('viewDescription').innerText = activity.Description || '';
-  document.getElementById('viewScheduledDate').innerText = activity.ScheduledDate || '';
-  document.getElementById('viewStartEnd').innerText = (activity.StartTime||'') + ' - ' + (activity.EndTime||'');
-  document.getElementById('viewGrade').innerText = activity.GradeName || '';
-  document.getElementById('viewEmp').innerText = activity.EmpName || '';
-  document.getElementById('viewCategory').innerText = activity.Category || '';
-  document.getElementById('viewLocation').innerText = activity.Location || '';
-  // TODO: cargar media asociado y mostrar en #viewMediaGallery
-  $('#viewActivityModal').modal('show');
-}
-
-/* Eliminación lógica: marcamos como 'Cancelled' */
-async function logicalDeleteActivity(id){
-  if(!confirm('Confirmar eliminación lógica (marcar como Cancelled)?')) return;
-  try{
-    // TODO: fetch PATCH/PUT to set Status='Cancelled'
-    // await fetch(`/api/activities/${id}`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({Status:'Cancelled'})});
-    console.log('Eliminar lógicamente actividad', id);
-    loadActivities();
-  }catch(e){
-    console.error(e);
-    alert('Error eliminando actividad.');
-  }
-}
-
-/* Abrir modal de asignación desde formulario */
-function openAssignModalFromForm(){
-  const id = document.getElementById('ActivityID').value;
-  if(!id){
-    alert('Guarde la actividad antes de asignar una maestra.');
-    return;
-  }
-  document.getElementById('assignActivityID').value = id;
-  $('#assignModal').modal('show');
-}
-
-/* Abrir modal de asignación desde lista (pasar activityID) */
-function openAssignModal(activityID){
-  document.getElementById('assignActivityID').value = activityID;
-  $('#assignModal').modal('show');
-}
-
-/* Asignar maestra (placeholder: debe crear registro de asignación en servidor) */
-async function assignTeacher(){
-  const payload = {
-    ActivityID: document.getElementById('assignActivityID').value,
-    EmpID: document.getElementById('assignEmpID').value,
-    Date: document.getElementById('assignDate').value,
-    StartTime: document.getElementById('assignStartTime').value,
-    EndTime: document.getElementById('assignEndTime').value,
-    Notes: document.getElementById('assignNotes').value
-  };
-  try{
-    // TODO: POST /api/activity_assignments (o actualizar activity.EmpID + date/time as needed)
-    console.log('Asignar maestra', payload);
-    $('#assignModal').modal('hide');
-    loadActivities();
-  }catch(e){
-    console.error(e);
-    alert('Error asignando maestra.');
-  }
-}
-
-/* Abrir modal subir material */
-function openMediaModal(activityID){
-  document.getElementById('mediaActivityID').value = activityID;
-  document.getElementById('Caption').value = '';
-  document.getElementById('MediaType').value = 'Image';
-  document.getElementById('FilePath').value = '';
-  $('#mediaModal').modal('show');
-}
-
-/* Upload media -> rellenar activity_media */
-async function uploadMedia(){
-  const activityID = document.getElementById('mediaActivityID').value;
-  const fileInput = document.getElementById('FilePath');
-  if(!fileInput.files.length){
-    alert('Seleccione un archivo.');
-    return;
-  }
-  const fd = new FormData();
-  fd.append('ActivityID', activityID);
-  fd.append('MediaType', document.getElementById('MediaType').value);
-  fd.append('Caption', document.getElementById('Caption').value || '');
-  fd.append('file', fileInput.files[0]);
-
-  try{
-    // TODO: POST /api/activity_media -> backend debe almacenar archivo, calcular FileSize y guardar fila
-    // const res = await fetch('/api/activity_media', {method:'POST', body: fd});
-    // const data = await res.json();
-    console.log('Subir media (FormData) para actividad', activityID);
-    $('#mediaModal').modal('hide');
-    loadActivities();
-  }catch(e){
-    console.error(e);
-    alert('Error subiendo material.');
-  }
-}
-
-/* Helpers: render acciones en cada fila (cuando generes filas desde loadActivities) */
-/* Ejemplo de botones (usar en render): 
-  <button class="btn btn-sm btn-info" onclick="viewActivity(obj)">Ver</button>
-  <button class="btn btn-sm btn-warning" onclick="openEditActivity(obj)">Editar</button>
-  <button class="btn btn-sm btn-danger" onclick="logicalDeleteActivity(obj.ActivityID)">Eliminar</button>
-  <button class="btn btn-sm btn-secondary" onclick="openAssignModal(obj.ActivityID)">Asignar</button>
-  <button class="btn btn-sm btn-primary" onclick="openMediaModal(obj.ActivityID)">Subir Material</button>
-*/
-</script>
 </body>
 </html>

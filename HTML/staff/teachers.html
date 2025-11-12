@@ -142,6 +142,29 @@
                 </div>
               </div>
             </div>
+                        <!-- Modal: Gestión de Roles -->
+            <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Gestión de Roles</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="roleForm" class="form-inline mb-3">
+                      <input id="roleName" class="form-control mr-2" placeholder="Nuevo rol" required />
+                      <button class="btn btn-primary" type="submit">Agregar</button>
+                    </form>
+                    <ul id="rolesList" class="list-group"></ul>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <footer class="sticky-footer bg-white">
@@ -166,6 +189,7 @@
     <script src="../../js/config.js"></script>
     <script src="../../js/auth.js"></script>
     <script src="../../js/dynamic-sidebar.js"></script>
+    <script src="../../js/security/security.js"></script>
     <script src="../../js/staff/teachers.js"></script>
   </body>
 </html>

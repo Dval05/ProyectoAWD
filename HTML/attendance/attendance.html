@@ -96,57 +96,30 @@
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Registro de Asistencia</h1>
-                    <div>
-                        <button class="btn btn-sm btn-primary shadow-sm" id="btnMarkAttendance"><i class="fas fa-calendar-check"></i> Marcar Asistencia</button>
-                    </div>
+                    <button class="btn btn-sm btn-primary shadow-sm" id="btnMarkAttendance"><i class="fas fa-calendar-check"></i> Marcar Asistencia</button>
                 </div>
-                <!-- Nuevos controles: seleccionar grado, fecha y hora de inicio -->
-                <div class="card mb-3">
-                  <div class="card-body">
-                    <div class="form-row align-items-end">
-                      <div class="form-group col-md-4">
-                        <label>Grado</label>
-                        <select id="filterGrade" class="form-control"></select>
-                      </div>
-                      <div class="form-group col-md-2">
-                        <label>Fecha</label>
-                        <input id="attendanceDate" type="date" class="form-control" />
-                      </div>
-                      <div class="form-group col-md-3">
-                        <label>Hora inicio de la clase</label>
-                        <input id="classStartTime" type="time" class="form-control" value="08:00" />
-                      </div>
-                      <div class="form-group col-md-3 text-right">
-                        <button id="btnLoadStudents" class="btn btn-success btn-block">Cargar Estudiantes</button>
-                        <button id="btnMarkAllPresent" class="btn btn-outline-success btn-block mt-2">Marcar todos presentes</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                 <div class="card shadow mb-4">
-                     <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Listado de Asistencia</h6></div>
-                     <div class="card-body">
-                         <div class="table-responsive">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Listado de Asistencia</h6></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
                             <table class="table table-bordered table-hover" id="attendanceTable" width="100%" cellspacing="0">
-                <thead>
-                  <tr>
-                    <th style="width:60px">#</th>
-                    <th style="width:90px">Presente</th>
-                    <th>Estudiante</th>
-                    <th style="width:120px">Hora llegada</th>
-                    <th style="width:120px">Hora salida</th>
-                    <th style="width:120px">Estado</th>
-                    <th>Notas</th>
-                    <th style="width:90px">Check</th>
-                    <th style="width:100px">Acción</th>
-                  </tr>
-                </thead>
+                                <thead>
+                                    <tr>
+                                        <th>Estudiante</th>
+                                        <th>Fecha</th>
+                                        <th>Check-In</th>
+                                        <th>Check-Out</th>
+                                        <th>Estado</th>
+                                        <th>Notas</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="attendanceTableBody"></tbody>
                             </table>
-                         </div>
-                     </div>
-                 </div>
-             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <footer class="sticky-footer bg-white">
             <div class="container my-auto"><div class="copyright text-center my-auto">
@@ -167,277 +140,5 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/dynamic-sidebar.js"></script>
     <script src="../../js/attendance/attendance.js"></script>
-   <!-- Script inline: carga estudiantes por grado, maneja marcar presente / tardanza y guardado -->
-   <script>
-   (function(){
-     const gradeSelect = document.getElementById('filterGrade');
-     const dateInput = document.getElementById('attendanceDate');
-     const classStartTimeInput = document.getElementById('classStartTime');
-     const loadBtn = document.getElementById('btnLoadStudents');
-     const markAllBtn = document.getElementById('btnMarkAllPresent');
-     const tbody = document.getElementById('attendanceTableBody');
-
-     document.addEventListener('DOMContentLoaded', () => {
-       const today = new Date().toISOString().substr(0,10);
-       dateInput.value = today;
-      showEmptyTableMessage('Sin registros');
-      loadGrades();
-     });
-
-    function showEmptyTableMessage(msg){
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">${escapeHtml(msg)}</td></tr>`;
-    }
-
-     loadBtn.addEventListener('click', () => {
-       const gradeId = gradeSelect.value;
-       if(!gradeId){ alert('Seleccione un grado.'); return; }
-       loadStudentsByGrade(gradeId);
-     });
-
-     markAllBtn.addEventListener('click', () => {
-       const checkboxes = tbody.querySelectorAll('.presentChk');
-       checkboxes.forEach(chk => {
-         if(!chk.checked){
-           chk.checked = true;
-           chk.dispatchEvent(new Event('change'));
-         }
-       });
-     });
-
-     async function loadGrades(){
-       try{
-        const res = await fetch('../../PHP/attendance/grades.php', { cache: 'no-store' });
-        // Leer como texto primero to avoid "Unexpected token '<'" if server returned HTML (errors/warnings)
-        const text = await res.text();
-        let grades;
-        try {
-          grades = JSON.parse(text);
-        } catch (parseErr) {
-          console.error('Respuesta no JSON desde grades.php:', text);
-          throw new Error('Error cargando grados: respuesta inválida del servidor');
-        }
-        if (!res.ok) {
-          // If server returned an error object, show that message
-          const msg = grades && grades.error ? grades.error : 'Error cargando grados';
-          throw new Error(msg);
-        }
-        if (!Array.isArray(grades)) throw new Error('Respuesta de grados inválida');
-
-        gradeSelect.innerHTML = '<option value="">-- Seleccione grado --</option>';
-        grades.forEach(g => {
-          const opt = document.createElement('option');
-          // Aceptar tanto GradeID/GradeName como lowercase keys por si el backend cambia
-          opt.value = g.GradeID ?? g.gradeid ?? g.id ?? '';
-          opt.textContent = g.GradeName ?? g.gradename ?? g.name ?? '';
-          gradeSelect.appendChild(opt);
-        });
-       }catch(e){
-         console.error(e);
-         gradeSelect.innerHTML = '<option value="">Error cargando grados</option>';
-       }
-     }
-
-    async function loadStudentsByGrade(gradeId){
-      tbody.innerHTML = '<tr><td colspan="9">Cargando...</td></tr>';
-      try{
-  // Llamar al endpoint PHP en server side y pasar la fecha para precargar asistencia
-  const res = await fetch(`../../PHP/attendance/students.php?gradeId=${encodeURIComponent(gradeId)}&date=${encodeURIComponent(dateInput.value)}`, { cache: 'no-store' });
-        const text = await res.text();
-        let students;
-        try { students = JSON.parse(text); } catch(err) { console.error('Respuesta no JSON de students.php:', text); throw new Error('Error cargando estudiantes: respuesta inválida'); }
-        if (!res.ok) {
-          const msg = students && students.message ? students.message : 'Error cargando estudiantes';
-          throw new Error(msg);
-        }
-        renderStudentRows(students);
-      }catch(e){
-        console.error(e);
-        tbody.innerHTML = '<tr><td colspan="9">Error cargando estudiantes.</td></tr>';
-      }
-    }
-
-     function renderStudentRows(students){
-       tbody.innerHTML = '';
-       students.forEach((s, idx) => {
-         const tr = document.createElement('tr');
-         tr.dataset.studentId = s.StudentID;
-        tr.innerHTML = `
-           <td>${idx+1}</td>
-           <td class="text-center"><input type="checkbox" class="presentChk form-control" /></td>
-           <td>${escapeHtml(s.FirstName)} ${escapeHtml(s.LastName)}</td>
-           <td><input type="time" class="form-control arrivalTime" value="${s.CheckInTime ?? ''}" /></td>
-           <td><input type="time" class="form-control checkoutTime" value="${s.CheckOutTime ?? ''}" /></td>
-           <td>
-             <select class="form-control statusSel">
-               <option value="Present">Present</option>
-               <option value="Absent">Absent</option>
-               <option value="Late">Late</option>
-               <option value="Excused">Excused</option>
-             </select>
-           </td>
-           <td><input type="text" class="form-control notesInput" placeholder="Notas..." value="${escapeHtml(s.Notes ?? '')}" /></td>
-           <td class="text-center lateCell"><input type="checkbox" class="lateChk form-control" disabled ${s.IsLate ? 'checked' : ''} /></td>
-           <td class="text-center"><button class="btn btn-sm btn-primary saveBtn">Guardar</button></td>
-         `;
-         // eventos
-         const presentChk = tr.querySelector('.presentChk');
-         const arrivalInput = tr.querySelector('.arrivalTime');
-         const checkoutInput = tr.querySelector('.checkoutTime');
-         const lateChk = tr.querySelector('.lateChk');
-         const statusSel = tr.querySelector('.statusSel');
-         const saveBtn = tr.querySelector('.saveBtn');
-
-         // set initial state based on loaded attendance
-         if (s.AttendanceID) {
-           tr.dataset.attendanceId = s.AttendanceID;
-           // mark present if attendance record exists
-           presentChk.checked = true;
-         } else {
-           presentChk.checked = false;
-         }
-         if (s.Status) statusSel.value = s.Status;
-         if (s.IsLate) lateChk.checked = !!s.IsLate;
-
-         presentChk.addEventListener('change', () => {
-           if(presentChk.checked){
-             // establecer hora actual si está vacío
-             if(!arrivalInput.value){
-               const now = new Date();
-               arrivalInput.value = now.toTimeString().substr(0,5);
-             }
-             statusSel.value = 'Present';
-           } else {
-             arrivalInput.value = '';
-             lateChk.checked = false;
-             statusSel.value = 'Absent';
-           }
-           checkLateForRow(arrivalInput, lateChk, statusSel);
-         });
-
-         // if there was existing AttendanceID and IsLate, reflect visual
-         if (tr.dataset.attendanceId && lateChk.checked) {
-           const lateCell = tr.querySelector('.lateCell');
-           if (lateCell) lateCell.classList.add('table-warning');
-         }
-
-         arrivalInput.addEventListener('change', () => {
-           // marcar presente si hay hora
-           presentChk.checked = !!arrivalInput.value;
-           checkLateForRow(arrivalInput, lateChk, statusSel);
-         });
-
-        // si el usuario ingresa hora de salida marcar como presente si 'present' no marcado
-        checkoutInput.addEventListener('change', () => {
-          if (checkoutInput.value && !presentChk.checked) {
-            presentChk.checked = true;
-          }
-        });
-
-         saveBtn.addEventListener('click', () => {
-           saveRowAttendance(tr);
-         });
-
-         tbody.appendChild(tr);
-       });
-     }
-
-     function checkLateForRow(arrivalInput, lateChk, statusSel){
-       const arrival = arrivalInput.value;
-       const start = classStartTimeInput.value;
-       if(!arrival || !start){
-         lateChk.checked = false;
-         if(!arrival) statusSel.value = 'Absent';
-         return;
-       }
-       const arrivalMin = timeToMinutes(arrival);
-       const startMin = timeToMinutes(start);
-       if(arrivalMin > startMin){
-         lateChk.checked = true;
-         statusSel.value = 'Late';
-       } else {
-         lateChk.checked = false;
-         // only change to Present if it was Absent
-         if(statusSel.value === 'Late' || statusSel.value === 'Absent') statusSel.value = 'Present';
-       }
-     }
-
-     function timeToMinutes(t){
-       const [hh,mm] = (t||'00:00').split(':').map(Number);
-       return hh*60 + mm;
-     }
-
-     async function saveRowAttendance(tr){
-       const studentId = tr.dataset.studentId;
-       const date = dateInput.value;
-       const checkIn = tr.querySelector('.arrivalTime').value || null;
-      const checkOut = tr.querySelector('.checkoutTime').value || null;
-       const late = tr.querySelector('.lateChk').checked ? 1 : 0;
-       const status = tr.querySelector('.statusSel').value;
-       const notes = tr.querySelector('.notesInput').value;
-
-       const payload = {
-         StudentID: Number(studentId),
-         Date: date,
-         CheckInTime: checkIn,
-        CheckOutTime: checkOut,
-         Status: status,
-         IsLate: late,
-         LateMinutes: (late && checkIn) ? Math.max(0, timeToMinutes(checkIn)-timeToMinutes(classStartTimeInput.value)) : 0,
-         Notes: notes
-       };
-      // attach current user id if available
-      const currentUserId = window.currentUserId || window.CurrentUserID || localStorage.getItem('UserID') || null;
-      if (currentUserId) {
-        payload.CheckedInBy = checkIn ? Number(currentUserId) : null;
-        payload.CheckedOutBy = checkOut ? Number(currentUserId) : null;
-      }
-
-       try{
-        const res = await fetch('../../PHP/attendance/attendance_save.php', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify(payload)
-         });
-        const data = await res.json();
-        if(!res.ok || !data.success) throw new Error(data.message || 'Error guardando');
-        // mark late cell color
-        const lateCell = tr.querySelector('.lateCell');
-        if (late && lateCell) {
-          lateCell.classList.add('table-warning');
-        }
-        // store returned AttendanceID if any
-        if (data && data.AttendanceID) tr.dataset.attendanceId = data.AttendanceID;
-        showTemporaryFeedback(tr, 'Guardado', 'success');
-        showToast('Asistencia guardada');
-       }catch(e){
-         console.error(e);
-         showTemporaryFeedback(tr, 'Error', 'danger');
-       }
-     }
-
-     function showTemporaryFeedback(tr, msg, type){
-       const btn = tr.querySelector('.saveBtn');
-       const original = btn.innerHTML;
-       btn.innerHTML = msg;
-       btn.classList.remove('btn-primary','btn-danger','btn-success');
-       btn.classList.add(type==='success' ? 'btn-success' : (type==='danger' ? 'btn-danger' : 'btn-primary'));
-       setTimeout(()=>{ btn.innerHTML = original; btn.classList.remove('btn-success','btn-danger'); btn.classList.add('btn-primary'); }, 1500);
-     }
-
-    // simple non-blocking toast
-    function showToast(msg, timeout=2000){
-      const el = document.createElement('div');
-      el.className = 'small-toast';
-      el.style.cssText = 'position:fixed;right:20px;bottom:20px;background:#343a40;color:#fff;padding:8px 12px;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:2000;opacity:0;transition:opacity .2s ease-in-out';
-      el.textContent = msg;
-      document.body.appendChild(el);
-      requestAnimationFrame(()=>el.style.opacity='1');
-      setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, timeout);
-    }
-
-     function escapeHtml(text){ return (text||'').toString().replace(/[&<>"']/g, (m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-   })();
-   </script>
 </body>
 </html>
