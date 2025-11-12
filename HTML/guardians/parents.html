@@ -93,36 +93,21 @@
             </ul>
           </nav>
                 <!-- End of Topbar -->
-            <div class="container-fluid">
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Gestión de Tutores</h1>
-                    <a href="guardian-detail.html" class="btn btn-sm btn-primary shadow-sm">
-                        <i class="fas fa-plus fa-sm text-white-50"></i> Agregar Tutor
-                    </a>
-                </div>
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Lista de Tutores</h6></div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover" id="guardiansTable" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Relación</th>
-                                        <th>Teléfono</th>
-                                        <th>Email</th>
-                                        <th>Estudiantes</th>
-                                        <th>Principal</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="guardiansTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="container mt-4">
+                <h2 class="mb-4">Representantes</h2>
+              
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Nombre</th><th>Documento</th><th>Relación</th>
+                    <th>Teléfono</th><th>Email</th><th>Emergencia</th><th>Pickup</th><th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="guardiansTableBody"></tbody>
+              </table>
+
+             
+
         </div>
         <footer class="sticky-footer bg-white">
             <div class="container my-auto"><div class="copyright text-center my-auto">
