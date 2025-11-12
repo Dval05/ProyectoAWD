@@ -56,6 +56,14 @@
                   >
                 </a>
               </li>
+              <!-- DB Check button -->
+              <li class="nav-item no-arrow mx-1">
+                <a class="nav-link" href="#" id="checkDbBtn" title="Verificar conexión DB">
+                  <i class="fas fa-database"></i>
+                </a>
+              </li>
+
+              <div class="topbar-divider d-none d-sm-block"></div>
               <div class="topbar-divider d-none d-sm-block"></div>
               <li class="nav-item dropdown no-arrow">
                 <a
@@ -422,5 +430,23 @@
     <script src="../js/auth.js"></script>
     <script src="../js/dynamic-sidebar.js"></script>
     <script src="../js/dashboard.js"></script>
+    <script>
+    // Simple check: llama al endpoint PHP que verifica la conexión y muestra un alert con el resultado
+    document.getElementById('checkDbBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        fetch('../tools/db_check.php', { credentials: 'same-origin' })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data.success) {
+                alert('Conexión OK: ' + (data.message || 'Conectado a MySQL') );
+            } else {
+                alert('Error conexión DB: ' + (data.error || 'Error desconocido') );
+            }
+        })
+        .catch(function (err) {
+            alert('Error al verificar la DB: ' + err.message);
+        });
+    });
+    </script>
   </body>
 </html>
