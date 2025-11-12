@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Ver Asistencia - NICEKIDS</title>
+    <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700,900&display=swap" rel="stylesheet">
+    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+      .small-note { font-size:0.9rem; color:#666 }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"></ul>
+  <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+      <!-- Topbar omitted for brevity (shared by dynamic-sidebar) -->
+      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"></nav>
+      <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 class="h3 mb-0 text-gray-800">Visualizar Asistencia por Grado / Fecha</h1>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="form-row align-items-end">
+              <div class="form-group col-md-4">
+                <label>Grado (opcional)</label>
+                <select id="viewGrade" class="form-control"><option value="">-- Todos --</option></select>
+              </div>
+              <div class="form-group col-md-3">
+                <label>Desde</label>
+                <input id="startDate" type="date" class="form-control" />
+              </div>
+              <div class="form-group col-md-3">
+                <label>Hasta</label>
+                <input id="endDate" type="date" class="form-control" />
+              </div>
+              <div class="form-group col-md-2 text-right">
+                <button id="btnLoadView" class="btn btn-primary btn-block">Cargar</button>
+              </div>
+            </div>
+            <div class="small-note">Si no se especifica rango, se muestran los últimos 30 días.</div>
+          </div>
+        </div>
+
+        <div class="card shadow mb-4">
+          <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Asistencia (solo lectura)</h6></div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" id="viewAttendanceTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Grado</th>
+                    <th>Estudiante</th>
+                    <th>Hora ingreso</th>
+                    <th>Hora de salida</th>
+                    <th>Estado</th>
+                    <th>Tarde</th>
+                    <th>Minutos tarde</th>
+                    <th>Notas</th>
+                  </tr>
+                </thead>
+                <tbody id="viewAttendanceBody">
+                  <tr><td colspan="10" class="text-center text-muted">Sin registros</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <footer class="sticky-footer bg-white"><div class="container my-auto"><div class="copyright text-center my-auto"><span>&copy; NICEKIDS 2025</span></div></div></footer>
+  </div>
+</div>
+<script src="../../vendor/jquery/jquery.min.js"></script>
+<script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../../vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="../../js/sb-admin-2.min.js"></script>
+<!-- shared site scripts to populate sidebar/topbar -->
+<script src="../../js/utils.js"></script>
+<script src="../../js/config.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/dynamic-sidebar.js"></script>
+<script>
+  (function(){
+    const gradeSelect = document.getElementById('viewGrade');
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+    const btn = document.getElementById('btnLoadView');
+    const tbody = document.getElementById('viewAttendanceBody');
+
+    function setDefaultDates(){
+      const now = new Date();
+      const prior = new Date(); prior.setDate(now.getDate()-30);
+      function iso(d){ return d.toISOString().substr(0,10); }
+      startDate.value = iso(prior);
+      endDate.value = iso(now);
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{ setDefaultDates(); loadGrades(); });
+
+    btn.addEventListener('click', ()=> loadData());
+
+    async function loadGrades(){
+      try{
+        const res = await fetch('../../PHP/attendance/grades.php');
+        const js = await res.json();
+        gradeSelect.innerHTML = '<option value="">-- Todos --</option>';
+        js.forEach(g=>{ const o=document.createElement('option'); o.value=g.GradeID; o.textContent=g.GradeName; gradeSelect.appendChild(o); });
+      }catch(e){ console.error(e); }
+    }
+
+    async function loadData(){
+      tbody.innerHTML = '<tr><td colspan="14">Cargando...</td></tr>';
+      const params = new URLSearchParams();
+      if (gradeSelect.value) params.append('gradeId', gradeSelect.value);
+      if (startDate.value) params.append('startDate', startDate.value);
+      if (endDate.value) params.append('endDate', endDate.value);
+      try{
+        const res = await fetch(`../../PHP/attendance/view.php?${params.toString()}`);
+        if(!res.ok) throw new Error('Error cargando vista');
+        const data = await res.json();
+        render(data);
+      }catch(e){ console.error(e); tbody.innerHTML = '<tr><td colspan="14">Error cargando datos.</td></tr>'; }
+    }
+
+    function render(rows){
+      if(!Array.isArray(rows) || rows.length===0){ tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">Sin registros</td></tr>'; return; }
+      const html = rows.map((r, idx)=>{
+        return `<tr>
+          <td>${idx+1}</td>
+          <td>${r.Date}</td>
+          <td>${escapeHtml(r.GradeName||'')}</td>
+          <td>${escapeHtml((r.FirstName||'') + ' ' + (r.LastName||''))}</td>
+          <td>${r.CheckInTime||''}</td>
+          <td>${r.CheckOutTime||''}</td>
+          <td>${r.Status||''}</td>
+          <td>${r.IsLate? 'Sí' : 'No'}</td>
+          <td>${r.LateMinutes||0}</td>
+          <td>${escapeHtml(r.Notes||'')}</td>
+        </tr>`;
+      }).join('');
+      tbody.innerHTML = html;
+    }
+
+    function escapeHtml(text){ return (text||'').toString().replace(/[&<>'"]/g, (m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  })();
+</script>
+</body>
+</html>
