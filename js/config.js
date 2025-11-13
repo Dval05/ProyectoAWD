@@ -13,6 +13,10 @@ function getBaseApiPath() {
     }
     // Si no existe /php en la ruta, toma el primer segmento como root de proyecto
     var parts = path.split('/');
+<<<<<<< HEAD
+=======
+    // Use uppercase 'PHP' directory which matches the repository layout
+>>>>>>> e82cbaf0408ea7022fc069454190b6205b9bcec7
     return '/' + (parts[1] || '') + '/PHP';
 }
 
