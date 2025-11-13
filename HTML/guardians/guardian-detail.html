@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Detalle de Representante - NICEKIDS</title>
+  <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,700,900" rel="stylesheet" />
+  <link href="../../css/sb-admin-2.min.css" rel="stylesheet" />
+  <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body id="page-top">
+  <div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="userName">Usuario</span>
+                <img class="img-profile rounded-circle" src="../../img/undraw_profile.svg" />
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="container-fluid">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+              <a href="parents.html" class="btn btn-sm btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+              </a>
+              Detalle de Representante
+            </h1>
+            <div>
+              <button class="btn btn-sm btn-primary" id="btnEditGuardian">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <!-- Perfil de representante -->
+            <div class="col-lg-4">
+              <div class="card shadow mb-4">
+                <div class="card-body text-center">
+                  <img class="img-profile rounded-circle mb-3 border" id="guardianPhoto" src="../../img/undraw_profile.svg" style="width: 150px; height: 150px;"/>
+                  <h4 class="font-weight-bold" id="guardianFullName">Representante</h4>
+                  <p class="text-muted" id="guardianRelationship">-</p>
+                  <span class="badge badge-info" id="guardianType">Tutor</span>
+                  <hr />
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="font-weight-bold text-primary">Documento</div>
+                      <div class="text-gray-800" id="guardianDocumentNumber">-</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="font-weight-bold text-primary">Teléfono</div>
+                      <div class="text-gray-800" id="guardianPhoneNumber">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Detalle -->
+            <div class="col-lg-8">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Información Personal</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p><strong>Email:</strong> <span id="guardianEmail">-</span></p>
+                      <p><strong>Dirección:</strong> <span id="guardianAddress">-</span></p>
+                      <p><strong>Ocupación:</strong> <span id="guardianOccupation">-</span></p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Tel. Trabajo:</strong> <span id="guardianWorkPhone">-</span></p>
+                      <p><strong>Contacto de Emergencia:</strong> <span id="guardianIsEmergencyContact">-</span></p>
+                      <p><strong>Puede Retirar:</strong> <span id="guardianIsAuthorizedPickup">-</span></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Estudiantes Vinculados -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Estudiantes Vinculados</h6>
+                </div>
+                <div class="card-body">
+                  <ul id="linkedStudents" class="list-group"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; NICEKIDS 2025</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../js/sb-admin-2.min.js"></script>
+    <!-- utils.js SIEMPRE antes del dinámico -->
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/dynamic-sidebar.js"></script>
+  <script src="../../js/guardians/guardian-detail.js"></script>
+</body>
+</html>

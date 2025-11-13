@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="NICEKIDS - Dashboard" />
+    <title>Dashboard - NICEKIDS</title>
+    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
+    <link href="../css/sb-admin-2.min.css" rel="stylesheet" />
+  </head>
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <ul
+        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar"
+      >
+        <!-- Sidebar dinámico se inyecta aquí (dynamic-sidebar.js) -->
+      </ul>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <!-- Topbar -->
+          <nav
+            class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+          >
+            <button
+              id="sidebarToggleTop"
+              class="btn btn-link d-md-none rounded-circle mr-3"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item dropdown no-arrow mx-1">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="communication/notifications.html"
+                  id="alertsDropdown"
+                >
+                  <i class="fas fa-bell fa-fw"></i>
+                  <span
+                    class="badge badge-danger badge-counter"
+                    id="notificationCount"
+                    >0</span
+                  >
+                </a>
+              </li>
+              <!-- DB Check button -->
+              <li class="nav-item no-arrow mx-1">
+                <a class="nav-link" href="#" id="checkDbBtn" title="Verificar conexión DB">
+                  <i class="fas fa-database"></i>
+                </a>
+              </li>
+
+              <div class="topbar-divider d-none d-sm-block"></div>
+              <div class="topbar-divider d-none d-sm-block"></div>
+              <li class="nav-item dropdown no-arrow">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span
+                    class="mr-2 d-none d-lg-inline text-gray-600 small"
+                    id="userName"
+                    >Usuario</span
+                  >
+                  <img
+                    class="img-profile rounded-circle"
+                    src="../img/undraw_profile.svg"
+                  />
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                  aria-labelledby="userDropdown"
+                >
+                  <a class="dropdown-item" href="users/profile.html">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Perfil
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-toggle="modal"
+                    data-target="#logoutModal"
+                  >
+                    <i
+                      class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"
+                    ></i>
+                    Cerrar Sesión
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <!-- End of Topbar -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+              <a
+                href="reports.html"
+                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+              >
+                <i class="fas fa-download fa-sm text-white-50"></i> Generar
+                Reporte
+              </a>
+            </div>
+
+            <!-- Content Row - Stats Cards -->
+            <div class="row">
+              <!-- Total Students Card -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                        >
+                          Estudiantes Activos
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="totalStudents"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total Teachers Card -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                        >
+                          Personal Activo
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="totalTeachers"
+                        >
+                          0
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i
+                          class="fas fa-chalkboard-teacher fa-2x text-gray-300"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Today's Attendance Card -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                        >
+                          Asistencia Hoy
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                          <div class="col-auto">
+                            <div
+                              class="h5 mb-0 mr-3 font-weight-bold text-gray-800"
+                              id="todayAttendance"
+                            >
+                              0%
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="progress progress-sm mr-2">
+                              <div
+                                class="progress-bar bg-info"
+                                role="progressbar"
+                                id="attendanceProgress"
+                                style="width: 0%"
+                                aria-valuenow="0"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i
+                          class="fas fa-clipboard-list fa-2x text-gray-300"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Monthly Revenue Card -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div
+                          class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                        >
+                          Ingresos del Mes
+                        </div>
+                        <div
+                          class="h5 mb-0 font-weight-bold text-gray-800"
+                          id="monthlyRevenue"
+                        >
+                          $0.00
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Row - Charts & Tables -->
+            <div class="row">
+              <!-- Attendance Chart -->
+              <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Asistencia Semanal
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="attendanceChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Activities -->
+              <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Actividades Recientes
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div id="recentActivities">
+                      <p class="text-center text-muted">Cargando...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Row - Payments & Pending Tasks -->
+            <div class="row">
+              <!-- Pending Payments -->
+              <div class="col-xl-6 col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Pagos Pendientes
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Estudiante</th>
+                            <th>Monto</th>
+                            <th>Vencimiento</th>
+                          </tr>
+                        </thead>
+                        <tbody id="pendingPaymentsTable">
+                          <tr>
+                            <td colspan="3" class="text-center text-muted">
+                              Cargando...
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upcoming Activities -->
+              <div class="col-xl-6 col-lg-6">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Próximas Actividades
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>Actividad</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody id="upcomingActivitiesTable">
+                          <tr>
+                            <td colspan="3" class="text-center text-muted">
+                              Cargando...
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; NICEKIDS 2025</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div
+      class="modal fade"
+      id="logoutModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              ¿Listo para salir?
+            </h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Selecciona "Cerrar Sesión" si estás listo para terminar tu sesión
+            actual.
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <a class="btn btn-primary" href="#" id="logoutBtn">Cerrar Sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- utils.js SIEMPRE antes del dinámico -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/dynamic-sidebar.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script>
+    // Simple check: llama al endpoint PHP que verifica la conexión y muestra un alert con el resultado
+    document.getElementById('checkDbBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        fetch('../tools/db_check.php', { credentials: 'same-origin' })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data.success) {
+                alert('Conexión OK: ' + (data.message || 'Conectado a MySQL') );
+            } else {
+                alert('Error conexión DB: ' + (data.error || 'Error desconocido') );
+            }
+        })
+        .catch(function (err) {
+            alert('Error al verificar la DB: ' + err.message);
+        });
+    });
+    </script>
+  </body>
+</html>
