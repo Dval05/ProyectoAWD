@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 $dbHost = 'localhost';
 $dbUser = 'admin';
 $dbPass = 'admin';
-$dbName = 'nicekids';
+$dbName = 'nicekids1';
 
 $result = ['success' => false];
 

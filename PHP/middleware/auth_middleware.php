@@ -2,11 +2,19 @@
 require_once('../config/database.php');
 
 function get_authorization_header() {
+	// Common server variables
 	if (isset($_SERVER['HTTP_AUTHORIZATION'])) return trim($_SERVER['HTTP_AUTHORIZATION']);
+	if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) return trim($_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
+	// Custom header fallback (some servers strip Authorization)
+	if (isset($_SERVER['HTTP_X_AUTH_TOKEN'])) return trim($_SERVER['HTTP_X_AUTH_TOKEN']);
+
+	// Try apache_request_headers if available
 	if (function_exists('apache_request_headers')) {
 		$headers = apache_request_headers();
-		if (isset($headers['Authorization'])) return trim($headers['Authorization']);
-		if (isset($headers['authorization'])) return trim($headers['authorization']);
+		// Normalize keys to lower-case for robustness
+		$lower = array_change_key_case($headers, CASE_LOWER);
+		if (isset($lower['authorization'])) return trim($lower['authorization']);
+		if (isset($lower['x-auth-token'])) return trim($lower['x-auth-token']);
 	}
 	return null;
 }
@@ -14,10 +22,12 @@ function get_authorization_header() {
 function get_bearer_token() {
 	$auth = get_authorization_header();
 	if (!$auth) return null;
+	// If header is like 'Bearer TOKEN'
 	if (stripos($auth, 'Bearer ') === 0) {
 		return trim(substr($auth, 7));
 	}
-	return null;
+	// If header is raw token (e.g. X-Auth-Token), return it
+	return trim($auth);
 }
 
 function require_auth() {
