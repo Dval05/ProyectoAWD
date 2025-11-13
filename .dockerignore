@@ -1,0 +1,32 @@
+# Git files
+.git
+.gitignore
+.github
+
+# Node modules (only needed for development)
+node_modules
+npm-debug.log
+package-lock.json
+
+# Documentation
+README.md
+*.pdf
+
+# Development files
+.travis.yml
+gulpfile.js
+scss
+.browserslistrc
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~

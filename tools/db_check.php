@@ -1,15 +1,16 @@
 <?php
 header('Content-Type: application/json');
 
-// Ajusta estas credenciales si tu entorno es distinto
-$dbHost = 'localhost';
-$dbUser = 'admin';
-$dbPass = 'admin';
-$dbName = 'nicekids1';
+// Database configuration with environment variable support
+$dbHost = getenv('DB_HOST') ?: 'localhost';
+$dbUser = getenv('DB_USER') ?: 'admin';
+$dbPass = getenv('DB_PASSWORD') ?: 'admin';
+$dbName = getenv('DB_NAME') ?: 'nicekids';
+$dbPort = getenv('DB_PORT') ?: 3306;
 
 $result = ['success' => false];
 
-$mysqli = @new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+$mysqli = @new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
 if ($mysqli->connect_errno) {
     $result['error'] = $mysqli->connect_error;
     $result['errno'] = $mysqli->connect_errno;

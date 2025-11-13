@@ -1,1 +1,25 @@
+# Dependencies
 node_modules
+
+# Environment variables
+.env
+.env.local
+
+# Uploads directory (user uploaded files)
+uploads/
+
+# Logs
+*.log
+npm-debug.log*
+error.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
