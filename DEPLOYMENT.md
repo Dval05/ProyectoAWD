@@ -51,12 +51,25 @@ Esta guía explica cómo desplegar el proyecto NICEKIDS en Render con la base de
 
 Puedes importar la base de datos de dos formas:
 
-**Opción A: Usando MySQL Client (Recomendado)**
+**Opción A: Usando el script de migración (Más fácil)**
+```bash
+# Configura las variables de entorno con las credenciales de Render
+export DB_HOST="tu-host.render.com"
+export DB_PORT="3306"
+export DB_USER="tu-usuario"
+export DB_PASSWORD="tu-password"
+export DB_NAME="nicekids"
+
+# Ejecuta el script de migración
+php migrate.php
+```
+
+**Opción B: Usando MySQL Client**
 ```bash
 mysql -h <DB_HOST> -P <DB_PORT> -u <DB_USER> -p<DB_PASSWORD> nicekids < nicekids.sql
 ```
 
-**Opción B: Usando phpMyAdmin o MySQL Workbench**
+**Opción C: Usando phpMyAdmin o MySQL Workbench**
 1. Conecta usando las credenciales de Render
 2. Importa el archivo `nicekids.sql`
 

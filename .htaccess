@@ -1,0 +1,58 @@
+# Apache configuration for NICEKIDS
+
+# Enable error reporting (disable in production if needed)
+php_flag display_errors off
+php_flag log_errors on
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Prevent directory listing
+Options -Indexes
+
+# Enable rewrite engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirect to HTTPS (uncomment if using SSL)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Set default index files
+DirectoryIndex index.html index.php
+
+# Security headers
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Enable XSS protection
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Protect sensitive files
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Protect .sql files
+<FilesMatch "\.(sql|bak|log)$">
+    Require all denied
+</FilesMatch>
+
+# Allow access to health check
+<Files "health.php">
+    Require all granted
+</Files>
+
+# PHP settings
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
