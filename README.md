@@ -71,15 +71,23 @@ Sistema web integral para la gestión de guarderías infantiles que permite admi
 
 ## Despliegue en Render
 
-Para desplegar este proyecto en Render con la base de datos nicekids, consulta la guía completa en [DEPLOYMENT.md](DEPLOYMENT.md).
+Este proyecto está listo para desplegar en Render con configuración automática.
 
-### Resumen rápido:
+### 🚀 Inicio Rápido
 
-1. Conectar tu repositorio a Render
-2. Render detectará automáticamente el `render.yaml`
-3. Aplicar el blueprint para crear servicios automáticamente
-4. Importar la base de datos `nicekids.sql`
-5. Acceder a tu aplicación en la URL generada
+Despliega en menos de 10 minutos siguiendo la [Guía de Inicio Rápido](QUICKSTART.md).
+
+### 📖 Documentación Completa
+
+Para una guía detallada paso a paso, consulta [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### Resumen:
+
+1. Crear base de datos MySQL en Render
+2. Crear Web Service conectando tu repositorio
+3. Configurar variables de entorno (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD)
+4. Importar `nicekids.sql` usando el script `migrate.php` o manualmente
+5. Acceder a tu aplicación en la URL generada por Render
 
 ## Estructura del Proyecto
 
