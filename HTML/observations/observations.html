@@ -122,45 +122,6 @@
         </div>
     </div>
 </div>
-<!-- Modal Editar Observación -->
-<div class="modal fade" id="editObservationModal" tabindex="-1" role="dialog" aria-labelledby="editObservationLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form id="editObservationForm" class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editObservationLabel">Editar Observación</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="editObservationID" name="ObservationID" />
-        <div class="form-group">
-          <label for="editCategory">Categoría</label>
-          <select id="editCategory" name="Category" class="form-control" required>
-            <option value="Académica">Académica</option>
-            <option value="Conducta">Conducta</option>
-            <option value="Salud">Salud</option>
-            <option value="Emocional">Emocional</option>
-            <option value="Otro">Otro</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="editObservation">Observación</label>
-          <textarea id="editObservation" name="Observation" class="form-control" rows="4" required></textarea>
-        </div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="editIsPrivate" name="IsPrivate" value="1">
-          <label class="form-check-label" for="editIsPrivate">Privada (solo visible para administración)</label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 </div>
 <footer class="sticky-footer bg-white"><div class="container my-auto"><div class="copyright text-center my-auto">
     <span>&copy; NICEKIDS 2025</span></div></div></footer>

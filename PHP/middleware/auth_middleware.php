@@ -1,19 +1,6 @@
 <?php
 require_once('../config/database.php');
 
-// Si no hay conexión a la base de datos, devolver error JSON claro (evita 500/HTML que rompe AJAX)
-if ((empty($conn) || !($conn instanceof mysqli)) && empty($pdo)) {
-	header('Content-Type: application/json');
-	http_response_code(500);
-	$logFile = __DIR__ . '/../../logs/db_connect.log';
-	$msg = 'DB connection not available';
-	if (file_exists($logFile)) {
-		$msg .= '. See log: ' . $logFile;
-	}
-	echo json_encode(['success' => false, 'code' => 500, 'msg' => $msg]);
-	exit();
-}
-
 function get_authorization_header() {
 	if (isset($_SERVER['HTTP_AUTHORIZATION'])) return trim($_SERVER['HTTP_AUTHORIZATION']);
 	if (function_exists('apache_request_headers')) {
@@ -41,26 +28,14 @@ function require_auth() {
 	$userId = null;
 
 	if ($token) {
-		// Intentar buscar token en la tabla session
-		$debugDir = __DIR__ . '/../../logs';
-		if (!is_dir($debugDir)) @mkdir($debugDir, 0755, true);
-		$debugFile = $debugDir . '/auth_debug.log';
-		@file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Checking token: " . $token . PHP_EOL, FILE_APPEND);
 		$q = $conn->prepare("SELECT UserID FROM session WHERE Token = ? AND ExpiresAt > NOW() LIMIT 1");
-		if ($q) {
-			$q->bind_param("s", $token);
-			$q->execute();
-			$q->bind_result($uid);
-			if ($q->fetch()) {
-				$userId = $uid;
-				@file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Token valid for UserID: " . $userId . PHP_EOL, FILE_APPEND);
-			} else {
-				@file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Token not found or expired." . PHP_EOL, FILE_APPEND);
-			}
-			$q->close();
-		} else {
-			@file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Prepare failed: " . $conn->error . PHP_EOL, FILE_APPEND);
+		$q->bind_param("s", $token);
+		$q->execute();
+		$q->bind_result($uid);
+		if ($q->fetch()) {
+			$userId = $uid;
 		}
+		$q->close();
 	}
 
 	if (!$userId) {
@@ -74,11 +49,7 @@ function require_auth() {
 	}
 
 	if (!$userId) {
-		// Registrar detalle y devolver 401
-		$debugDir = __DIR__ . '/../../logs';
-		$debugFile = $debugDir . '/auth_debug.log';
-		@file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Authentication failed, userId null. REMOTE_ADDR=" . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . PHP_EOL, FILE_APPEND);
-		header('HTTP/1.1 401 Unauthorized');
+		http_response_code(401);
 		echo json_encode(['success'=>false, 'code'=>401, 'msg'=>'No autenticado']);
 		exit();
 	}

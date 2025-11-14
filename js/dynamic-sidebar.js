@@ -9,8 +9,7 @@ $(function() {
         url: API_BASE_URL + "/users/get_sidebar_links.php",
         method: "GET",
         headers: {
-            "Authorization": "Bearer " + token,
-            "X-Auth-Token": token
+            "Authorization": "Bearer " + token
         },
         success: function(resp) {
             // Debug links recibidos
@@ -37,20 +36,8 @@ $(function() {
                 $("#accordionSidebar").html('<li class="nav-item"><span class="nav-link text-muted">Sin permisos</span></li>');
             }
         },
-        error: function(xhr) {
-            // Try to extract server message if JSON
-            var msg = 'Error al cargar menú';
-            try {
-                var j = JSON.parse(xhr.responseText);
-                if (j && j.msg) msg = j.msg;
-                else if (j && j.message) msg = j.message;
-                else if (j && j.code) msg = (j.code + ' ' + (j.msg || ''));
-            } catch (e) {
-                // not JSON
-                if (xhr.responseText && xhr.responseText.trim() !== '') msg = xhr.responseText;
-            }
-            console.error('get_sidebar_links error', xhr.status, xhr.responseText);
-            $("#accordionSidebar").html('<li class="nav-item"><span class="nav-link text-danger">'+msg+'</span></li>');
+        error: function() {
+            $("#accordionSidebar").html('<li class="nav-item"><span class="nav-link text-danger">Error al cargar menú</span></li>');
         }
     });
 });
