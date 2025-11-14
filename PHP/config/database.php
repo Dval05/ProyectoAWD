@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 // Configuración de conexión centralizada
 define('DB_HOST', 'sql3.freesqldatabase.com');
 define('DB_USER', 'sql3807670');
@@ -45,17 +44,6 @@ try {
         @file_put_contents($logFile, $msg, FILE_APPEND);
         // Dejar $conn y $pdo no definidos para que los scripts gestionen el error
     }
-=======
-$servername = "localhost";
-$username = "admin";
-$password = "admin";         // Cambia si tienes clave
-$dbname = "nicekids1";
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Verifica conexión
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
->>>>>>> e82cbaf0408ea7022fc069454190b6205b9bcec7
 }
 
 ?>

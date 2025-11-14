@@ -2,22 +2,14 @@
 header('Content-Type: application/json');
 
 // Ajusta estas credenciales si tu entorno es distinto
-<<<<<<< HEAD
-$dbHost = 'sql3.freesqldatabase.com';
-$dbUser = 'sql3807670';
-$dbPass = 'rH287DQKc3';
-$dbName = 'sql3807670';
-$dbPort = 3306;
-=======
 $dbHost = 'localhost';
 $dbUser = 'admin';
 $dbPass = 'admin';
-$dbName = 'nicekids1';
->>>>>>> e82cbaf0408ea7022fc069454190b6205b9bcec7
+$dbName = 'nicekids';
 
 $result = ['success' => false];
 
-$mysqli = @new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
+$mysqli = @new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 if ($mysqli->connect_errno) {
     $result['error'] = $mysqli->connect_error;
     $result['errno'] = $mysqli->connect_errno;
